@@ -1,122 +1,411 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | JIA Subtype Calculator</title>
-    <link rel="shortcut icon" href="TemplateData/favicon.ico">
-    <link rel="stylesheet" href="TemplateData/style.css">
-  </head>
-  <body>
-    <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
-      <div id="unity-loading-bar">
-        <div id="unity-logo"></div>
-        <div id="unity-progress-bar-empty">
-          <div id="unity-progress-bar-full"></div>
+<html>
+    <link href='https://fonts.googleapis.com/css?family=Rubik' rel='stylesheet'>
+    <style>
+        html {
+             background-repeat: no-repeat;
+             background-attachment: fixed;
+             background-color: #001e34;
+        }
+
+        body {
+            font-family: Rubik;
+            color: white;
+            accent-color: #d81466;
+            background-color: #001e34;
+            background-image: linear-gradient(#40b7e638, #001e34);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 400px));
+            padding: 2rem;
+        }   
+
+        .groupHeader {
+            color: #40b6e6
+        }
+
+        .titleRow {
+            display: flex;
+            justify-content: center;
+        }
+
+        .title {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .defaultButton {
+            background-color: #40b6e6;
+            border: none;
+            border-radius: 4px;
+            color: #001e34;
+            padding: 0.5rem;
+            margin-left: 2rem;
+            margin-right: 2rem;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .result {
+            font-size: 2rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            margin: 1rem;
+        }
+
+        .info {
+            color: #40b6e6;
+            display: flex;
+            justify-content: center;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        .exclusion {
+            color: #40b6e6;
+            display: flex;
+            justify-content: center;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        .adaptedRow {
+            display: flex;
+            justify-content: center;
+            margin-top:2rem;
+        }
+
+        .adapted {
+            display: flex;
+            font-size: 0.8rem;
+            justify-content: center;
+            text-align: center;
+            margin-top:2rem;
+            max-width: 600px;
+        }
+
+    </style>
+
+    <head>
+    </head>
+
+    <body>
+        <div class="main">
+            <div class="titleRow">
+                <p class="title">
+                    JIA Subtype Calculator
+                </p>
+            </div>
+
+            <div class="grid">  
+                <div>
+                    <p class="groupHeader">Sex</p>
+                    <input type="radio" name="sex" id="male" onclick="evalSubtype()" checked>
+                    <label for="male">Male</label><br>
+            
+                    <input type="radio" name="sex" id="female" onclick="evalSubtype()">
+                    <label for="female">Female</label><br>
+                </div>
+
+                <div>
+                    <p class="groupHeader">Age at Arthritis Onset</p>
+                    <input type="radio" name="age" id="fiveOrYounger" onclick="evalSubtype()" checked>
+                    <label for="fiveOrYounger">0 - 5 years old</label><br>
+            
+                    <input type="radio" name="age" id="sixOrOlder" onclick="evalSubtype()">
+                    <label for="sixOrOlder">6 years old or greater</label><br>
+                </div>
+
+                <div>
+                    <p class="groupHeader">Number of Joints</p>
+                    <input type="radio" name="numberOfJoints" id="zero" onclick="evalSubtype()">
+                    <label for="zero">0</label><br>
+            
+                    <input type="radio" name="numberOfJoints" id="oneToFour" onclick="evalSubtype()" checked>
+                    <label for="oneToFour">1 - 4</label><br>
+
+                    <input type="radio" name="numberOfJoints" id="fiveOrMore" onclick="evalSubtype()">
+                    <label for="fiveOrMore">5 or more</label><br>
+                </div>
+
+                <div>
+                    <p class="groupHeader">Inflammatory Bowel Disease</p>
+                    <input type="checkbox" id="ibd" name="ibd" onclick="evalSubtype()">
+                    <label for="ibd">IBD in patient</label><br>
+                </div>
+
+                <div>
+                    <p class="groupHeader">Rheumatoid Factor</p>
+                    <input type="radio" name="rf" id="rfNegative" onclick="evalSubtype()" checked>
+                    <label for="rfNegative">a test for rheumatoid factor is negative</label><br>
+            
+                    <input type="radio" name="rf" id="rfPositive" onclick="evalSubtype()">
+                    <label for="rfPositive">≥2 tests for rheumatoid factor ≥3 months apart are positive in the 1st 6 months of disease</label><br>
+
+                    <input type="radio" name="rf" id="neither" onclick="evalSubtype()">
+                    <label for="neither">neither</label><br>
+                </div>
+
+                <div>
+                    <p class="groupHeader">Systemic Arthritis</p>
+                    <input type="checkbox" id="fever" name="fever" onclick="evalSubtype()">
+                    <label for="fever">Daily fever of ≥2 weeks duration</label><br>
+
+                    <input type="checkbox" id="rash" name="rash" onclick="evalSubtype()">
+                    <label for="rash">Evanescent, erythematous rash</label><br>
+
+                    <input type="checkbox" id="lad" name="lad" onclick="evalSubtype()">
+                    <label for="lad">Generalized lymph node enlargement</label><br>
+
+                    <input type="checkbox" id="hsm" name="hsm" onclick="evalSubtype()">
+                    <label for="hsm">Hepatomegaly and/or splenomegaly</label><br>
+
+                    <input type="checkbox" id="serositis" name="serositis" onclick="evalSubtype()">
+                    <label for="serositis">Serositis</label><br>
+                </div>
+
+                <div>
+                    <p class="groupHeader">Psoriasis</p>
+                    <input type="checkbox" id="psoriasis" name="psoriasis" onclick="evalSubtype()">
+                    <label for="psoriasis">Psoriasis in patient</label><br>
+
+                    <input type="checkbox" id="dactylitis" name="dactylitis" onclick="evalSubtype()">
+                    <label for="dactylitis">Dactylitis</label><br>
+
+                    <input type="checkbox" id="nailPitting" name="nailPitting" onclick="evalSubtype()">
+                    <label for="nailPitting">Nail pitting or onycholysis</label><br>
+
+                    <input type="checkbox" id="psoriasisInFamily" name="psoriasisInFamily" onclick="evalSubtype()">
+                    <label for="psoriasisInFamily">Psoriasis in 1st degree relative</label><br>
+                </div>
+
+                <div>
+                    <p class="groupHeader">Enthesitis</p>
+                    <input type="checkbox" id="enthesitis" name="enthesitis" onclick="evalSubtype()">
+                    <label for="enthesitis">Enthesitis in patient</label><br>
+
+                    <input type="checkbox" id="siPain" name="siPain" onclick="evalSubtype()">
+                    <label for="siPain">Sacroiliac joint tenderness and/or inflammatory lumbosacral pain</label><br>
+
+                    <input type="checkbox" id="hlab27" name="hlab27" onclick="evalSubtype()">
+                    <label for="hlab27">Presence of HLA-B27 antigen</label><br>
+
+                    <input type="checkbox" id="uveitis" name="uveitis" onclick="evalSubtype()">
+                    <label for="uveitis">Acute anterior uveitis</label><br>
+
+                    <input type="checkbox" id="spondyInFamily" name="spondyInFamily" onclick="evalSubtype()">
+                    <label for="spondyInFamily">History of spondyloarthritis or acute anterior uveitis in 1st degree relative</label><br>
+                </div>
+            </div>
+
+            <div class="defaultRow">
+                <button class="defaultButton" onclick="defaultSelections()">Reset</button>
+            </div>
+
+            <div>
+                <p id="result" class="result">
+                    Oligoarthritis
+                </p>
+                <p id="info" class="info">
+                </p>
+                <p id="exclusion" class="exclusion">
+                </p>
+            </div>
+
+            <div class="adaptedRow">
+                <div class="adapted">
+                    <p>
+                        Adapted from:<br>
+                        Petty RE, Southwood TR, Manners P, et al. International League of Associations for Rheumatology classification of juvenile idiopathic arthritis: second revision, Edmonton, 2001. J Rheumatol 2004;31:390-2.<br><br>
+                        Eddie Re | 2024 | ree@chop.edu
+                    </p>
+                </div>
+            </div>
+
+
         </div>
-      </div>
-      <div id="unity-warning"> </div>
-      <div id="unity-footer">
-        <div id="unity-webgl-logo"></div>
-        <div id="unity-fullscreen-button"></div>
-        <div id="unity-build-title">JIA Subtype Calculator</div>
-      </div>
-    </div>
-    <script>
 
-      var container = document.querySelector("#unity-container");
-      var canvas = document.querySelector("#unity-canvas");
-      var loadingBar = document.querySelector("#unity-loading-bar");
-      var progressBarFull = document.querySelector("#unity-progress-bar-full");
-      var fullscreenButton = document.querySelector("#unity-fullscreen-button");
-      var warningBanner = document.querySelector("#unity-warning");
+        <script>
+            function evalSubtype() {
+                let isMale = document.getElementById("male").checked;
+                let isSixYearsOld = document.getElementById("sixOrOlder").checked;
 
-      // Shows a temporary message banner/ribbon for a few seconds, or
-      // a permanent error message on top of the canvas if type=='error'.
-      // If type=='warning', a yellow highlight color is used.
-      // Modify or remove this function to customize the visually presented
-      // way that non-critical warnings and error messages are presented to the
-      // user.
-      function unityShowBanner(msg, type) {
-        function updateBannerVisibility() {
-          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
-        }
-        var div = document.createElement('div');
-        div.innerHTML = msg;
-        warningBanner.appendChild(div);
-        if (type == 'error') div.style = 'background: red; padding: 10px;';
-        else {
-          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-          setTimeout(function() {
-            warningBanner.removeChild(div);
-            updateBannerVisibility();
-          }, 5000);
-        }
-        updateBannerVisibility();
-      }
+                let zeroJoints = document.getElementById("zero").checked;
+                let oneToFourJoints = document.getElementById("oneToFour").checked;
+                let fiveOrMoreJoints = document.getElementById("fiveOrMore").checked;
 
-      var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/Builds.loader.js";
-      var config = {
-        dataUrl: buildUrl + "/Builds.data",
-        frameworkUrl: buildUrl + "/Builds.framework.js",
-        codeUrl: buildUrl + "/Builds.wasm",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "Eddie Re",
-        productName: "JIA Subtype Calculator",
-        productVersion: "1.0",
-        showBanner: unityShowBanner,
-      };
+                let hasIBD = document.getElementById("ibd").checked;
 
-      // By default, Unity keeps WebGL canvas render target size matched with
-      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
-      // Set this to false if you want to decouple this synchronization from
-      // happening inside the engine, and you would instead like to size up
-      // the canvas DOM size and WebGL render target sizes yourself.
-      // config.matchWebGLToCanvasSize = false;
+                let rfNeg = document.getElementById("rfNegative").checked;
+                let rfPos = document.getElementById("rfPositive").checked;
+                let rfNeither = document.getElementById("neither").checked;
 
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        // Mobile device style: fill the whole browser client area with the game canvas:
+                let hasFever = document.getElementById("fever").checked;
+                let hasRash = document.getElementById("rash").checked;
+                let hasLAD = document.getElementById("lad").checked;
+                let hasHSM = document.getElementById("hsm").checked;
+                let hasSerositis = document.getElementById("serositis").checked;
 
-        var meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-        document.getElementsByTagName('head')[0].appendChild(meta);
-        container.className = "unity-mobile";
-        canvas.className = "unity-mobile";
+                let hasPsoriasis = document.getElementById("psoriasis").checked;
+                let hasDactylitis = document.getElementById("dactylitis").checked;
+                let hasNailPitting = document.getElementById("nailPitting").checked;
+                let hasPsoriasisInFamily = document.getElementById("psoriasisInFamily").checked;
 
-        // To lower canvas resolution on mobile devices to gain some
-        // performance, uncomment the following line:
-        // config.devicePixelRatio = 1;
+                let hasEnthesitis = document.getElementById("enthesitis").checked;
+                let hasSIPain = document.getElementById("siPain").checked;
+                let hasHLA2B7 = document.getElementById("hlab27").checked;
+                let hasUveitis = document.getElementById("uveitis").checked;
+                let hasSpondyInFamily = document.getElementById("spondyInFamily").checked;
 
+                let hasArthritis = oneToFourJoints || fiveOrMoreJoints;
+                let has2ERASubcriteria = (hasSIPain ? 1 : 0) + 
+                                         (hasHLA2B7 ? 1 : 0) +
+                                         (hasUveitis ? 1 : 0) +
+                                         (hasSpondyInFamily ? 1 : 0) >= 2;
 
-      } else {
-        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
+                let has2PsoriasisSubcriteria = (hasDactylitis ? 1 : 0) + 
+                                               (hasNailPitting ? 1 : 0) +
+                                               (hasPsoriasisInFamily ? 1 : 0) >= 2;
 
-        canvas.style.width = "960px";
-        canvas.style.height = "600px";
-      }
+                let hasERA = (hasArthritis && hasEnthesitis) || ((hasArthritis || hasEnthesitis) && has2ERASubcriteria)
 
-      loadingBar.style.display = "block";
+                let hasSJIA = hasArthritis && hasFever && (hasRash || hasLAD || hasHSM || hasSerositis);
 
-      var script = document.createElement("script");
-      script.src = loaderUrl;
-      script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
-          progressBarFull.style.width = 100 * progress + "%";
-              }).then((unityInstance) => {
-                loadingBar.style.display = "none";
-                fullscreenButton.onclick = () => {
-                  unityInstance.SetFullscreen(1);
-                };
-              }).catch((message) => {
-                alert(message);
-              });
-            };
+                let hasExclusionA = hasPsoriasis || hasPsoriasisInFamily;
+                let hasExclusionB = hasArthritis && isMale && isSixYearsOld && hasHLA2B7;
+                let hasExclusionC = hasERA || hasSpondyInFamily;
+                let hasExclusionD = rfPos;
+                let hasExclusionE = hasSJIA;
 
-      document.body.appendChild(script);
+                let fulfilledCriteria = 0;
+                let exclusions = [];
 
-    </script>
-  </body>
+                if (hasSJIA)
+                {
+                    if (hasExclusionA || hasExclusionB || hasExclusionC || hasExclusionD)
+                    {
+                        exclusions.push("Systemic Arthritis");
+                    }
+                    else
+                    {
+                        fulfilledCriteria += 1;
+                        document.getElementById("result").innerHTML = "Systemic Arthritis";
+                    }
+                }
+
+                if (oneToFourJoints)
+                {
+                    if (hasExclusionA || hasExclusionB || hasExclusionC || hasExclusionD || hasExclusionE)
+                    {
+                        exclusions.push("Oligoarthritis");
+                    }
+                    else
+                    {
+                        fulfilledCriteria += 1;
+                        document.getElementById("result").innerHTML = "Oligoarthritis";
+                    }
+                }
+
+                if (fiveOrMoreJoints && rfNeg)
+                {
+                    if (hasExclusionA || hasExclusionB || hasExclusionC || hasExclusionD || hasExclusionE)
+                    {
+                        exclusions.push("RF Negative Polyarthritis");
+                    }
+                    else
+                    {
+                        fulfilledCriteria += 1;
+                        document.getElementById("result").innerHTML = "RF Negative Polyarthritis";
+                    }
+                }
+
+                if (fiveOrMoreJoints && rfPos)
+                {
+                    if (hasExclusionA || hasExclusionB || hasExclusionC || hasExclusionE)
+                    {
+                        exclusions.push("RF Positive Polyarthritis");
+                    }
+                    else
+                    {
+                        fulfilledCriteria += 1;
+                        document.getElementById("result").innerHTML = "RF Positive Polyarthritis";
+                    }
+                }
+
+                if (hasArthritis && (hasPsoriasis || has2PsoriasisSubcriteria))
+                {
+                    if (hasExclusionB || hasExclusionC || hasExclusionD || hasExclusionE)
+                    {
+                        exclusions.push("Psoriatic Arthritis");
+                    }
+                    else
+                    {
+                        fulfilledCriteria += 1;
+                        document.getElementById("result").innerHTML = "Psoriatic Arthritis";
+                    }
+                }
+
+                if (hasERA)
+                {
+                    if (hasExclusionA || hasExclusionD || hasExclusionE)
+                    {
+                        exclusions.push("Enthesitis Related Arthritis");
+                    }
+                    else
+                    {
+                        fulfilledCriteria += 1;
+                        document.getElementById("result").innerHTML = "Enthesitis Related Arthritis";
+                    }
+                }
+
+                if (hasArthritis && fulfilledCriteria == 1)
+                {
+                    document.getElementById("info").innerHTML = "Fulfills criteria for " + fulfilledCriteria + " differentiated JIA subtype(s).";
+                }
+
+                if (hasArthritis && fulfilledCriteria != 1)
+                {
+                    document.getElementById("result").innerHTML = "Undifferentiated Arthritis";
+                    document.getElementById("info").innerHTML = "Fulfills criteria for " + fulfilledCriteria + " differentiated JIA subtype(s).";
+                }
+
+                if (!hasArthritis && fulfilledCriteria <= 0)
+                {
+                    document.getElementById("result").innerHTML = "No Arthritis";
+                    document.getElementById("info").innerHTML = "Fulfills criteria for " + fulfilledCriteria + " differentiated JIA subtype(s).";
+                }
+
+                if (hasArthritis && hasIBD)
+                {
+                    document.getElementById("result").innerHTML = "IBD-Associated Arthritis";
+                    document.getElementById("infoText").innerHTML = "Excluded from JIA classification but otherwise would fulfill criteria for " + fulfilledCriteria + " differentiated JIA subtype(s).";
+                }
+
+                if (!hasIBD && exclusions.length > 0)
+                {
+                    document.getElementById("exclusion").innerHTML = "Exclusion criteria for " + exclusions.join(", ") + " present.";
+                }
+                else
+                {
+                    document.getElementById("exclusion").innerHTML = "";
+                }
+            }
+
+            function defaultSelections() {
+                document.querySelectorAll('input[type=checkbox]').forEach(el => el.checked = false);
+
+                document.getElementById("male").checked = true;
+                document.getElementById("fiveOrYounger").checked = true;
+                document.getElementById("oneToFour").checked = true;
+                document.getElementById("rfNegative").checked = true;
+
+                evalSubtype();
+            }
+
+            window.onload = defaultSelections();
+        </script>
+    </body>
 </html>
